@@ -30,23 +30,25 @@ def forma_canonica(n,m,codigo):
 
     M=MatrixSpace(GF2, m, n)
     R = PolynomialRing(GF2, ['x%s'%i for i in range(1,n+1)])
-    C = M(codigo)  #Matriz compuesta por las palabras código en filas
-    ci = vector(R, C[0]) #Palabra c1
+    C = M(codigo)  # Matriz compuesta por las palabras código en filas
+    ci = vector(R, C[0]) # Palabra c1
     CF_JCi = [R.gen(j)-ci[j] for j in range(n)] # PASO 1
     S=[R.gen(j)^2-R.gen(j) for j in range (n)]
     B=R.ideal(S)
     i = 1
     while i < m:
         i = i + 1
-        Mi = [f * (R.gen(j)- vector(GF2,C[i-1])[j]) for j in range(n)for f in CF_JCi] # PASO2
+        Mi = [f * (R.gen(j)- vector(GF2,C[i-1])[j]) for j in range(n)for f in CF_JCi] # PASO 2
         Mi_prima=[]
         #PASO 3
         for f in Mi:
             if f not in B:
                 for g in S:
-                    Mi_prima.append(f%g)               
-        Mi_tilde=list(set([f for f in Mi_prima if not any(g.divides(f) for g in Mi_prima if f!=g)]))#PASO 4
-        CF_JCi=Mi_tilde #vuelta al PASO 2
+                    f=f%g
+                if f not in Mi_prima:
+                    Mi_prima.append(f)             
+        Mi_tilde=list(set([f for f in Mi_prima if not any(g.divides(f) for g in Mi_prima if f!=g)])) # PASO 4
+        CF_JCi=Mi_tilde # Vuelta al PASO 2
     formacanonica=[CF_JCi[i].factor() for i in range(len(CF_JCi))]
     return print("La forma canónica de ideal neuronal es",formacanonica)
 
